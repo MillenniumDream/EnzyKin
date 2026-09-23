@@ -1,0 +1,330 @@
+//! RTIP
+//!
+//! RTIP (roto-translational invariant potential) is a biased potential appended to the real PES
+//! (potential energy surface) to drive the molucule (aperiodic structure) escaping from local minimum
+//! along the most flat directions.It aims at intelligent pathway searching for chemical and biological
+//! reactions, like protein folding and enzyme catalysis.
+
+#![recursion_limit = "256"]
+
+//extern crate libc;
+//extern crate mpi;
+
+pub mod common;
+pub mod io;
+pub mod matrix;
+pub mod pes_exploration;
+pub mod nn;
+pub mod long_ranged;
+pub mod external;
+
+
+//use crate::common::constants::*;
+use crate::common::error::*;
+use crate::io::input::Para;
+use crate::io::output;
+use crate::external::cp2k::*;
+//use crate::rtip::*;
+use crate::pes_exploration::system::System;
+use crate::pes_exploration::potential::*;
+use crate::pes_exploration::traits::*;
+//use crate::nn::protein::ProteinSystem;
+//use crate::nn::descriptor::*;
+//use crate::nn::protein::Fragment;
+//use crate::matrix::rand_rot;
+
+//use std::ffi::CString;
+
+use mpi::topology::{Color, Communicator};
+
+use ndarray::prelude::*;
+//use ndarray_rand::RandomExt;
+//use ndarray_rand::rand_distr::Uniform;
+//use ndarray_linalg::{SVD, Determinant, EighInto, UPLO};
+
+
+
+
+
+#[no_mangle]
+pub extern fn main() -> i32
+{
+//    println!("Begin Initialization");
+    let universe = mpi::initialize().unwrap();
+    let world = universe.world();
+    cp2k_init_without_mpi();
+
+
+
+
+
+
+
+/*
+    let my_comm = world.split_by_color(Color::with_value(world.rank() % 1)).unwrap();
+    let output_path: String = output::create_output_path(&my_comm, Some(world.rank() % 1));
+    let cp2k_output_file: String = format!("{}cp2k.out", output_path);
+
+    let s: ProteinSystem = ProteinSystem::read_pdb("Gly.pdb");
+    let s: System = s.to_system();
+    s.write_xyz("Gly.xyz", true, 0);
+    let para: Para = Para::new();
+
+    let distribute_pot = DistributedPot 
+    {
+        visited_states: vec![s],
+        para: &para,
+        output_path,
+    };
+
+    {
+        let cp2k_pes = Cp2kPES::new("xTB.inp", &cp2k_output_file, 4);
+        distribute_pot.rtip_nvt_md(&my_comm, &cp2k_pes);
+    }
+*/
+
+
+
+
+
+
+
+
+/*
+    use crate::nn::training_data::ProteinSystemDescriptor;
+
+    ProteinSystemDescriptor::from_data("data/monomer/Gly");
+*/
+
+
+
+
+
+
+
+
+
+//    use crate::nn::training::train;
+//    let para: Para = Para::new();
+//    train(&para);
+
+
+
+
+
+
+
+
+
+
+
+    let my_comm = world.split_by_color(Color::with_value(world.rank() % 1)).unwrap();
+    let output_path: String = output::create_output_path(&my_comm, Some(world.rank() % 1));
+    let cp2k_output_file: String = format!("{}cp2k.out", output_path);
+
+    let mut s: System = System::read_xyz("6EQE.xyz");
+    let mut atom_add_pot: Vec<usize> = Vec::new();
+
+
+    // Ser
+//    for i in 1907..1912
+//    for i in 1907..1911
+//    {
+//        atom_add_pot.push(i);
+//    }
+    atom_add_pot.push(1910);
+//    atom_add_pot.push(1911);
+
+    // His
+//    for i in 2982..2993
+//    {
+//        atom_add_pot.push(i);
+//    }
+    atom_add_pot.push(2990);
+
+    // MET
+//    atom_add_pot.push(3836);
+    atom_add_pot.push(3837);
+//    atom_add_pot.push(3850);
+    atom_add_pot.push(3851);
+//    atom_add_pot.push(3867);
+//    atom_add_pot.push(3868);
+
+
+
+    // H2O (651)
+    atom_add_pot.push(5020);
+    atom_add_pot.push(5021);
+    atom_add_pot.push(5022);
+
+    // H2O (3551)
+//    atom_add_pot.push(13720);
+//    atom_add_pot.push(13721);
+//    atom_add_pot.push(13722);
+
+    // H2O (4846)
+//    atom_add_pot.push(17605);
+//    atom_add_pot.push(17606);
+//    atom_add_pot.push(17607);
+
+
+
+
+
+
+
+
+    // H2O (9589)
+//    atom_add_pot.push(31834);
+//    atom_add_pot.push(31835);
+//    atom_add_pot.push(31836);
+
+    // H2O (2142)
+//    atom_add_pot.push(9493);
+//    atom_add_pot.push(9494);
+//    atom_add_pot.push(9495);
+
+    // H2O (4846)
+//    atom_add_pot.push(17605);
+//    atom_add_pot.push(17606);
+//    atom_add_pot.push(17607);
+
+    // H2O (9304)
+//    atom_add_pot.push(30979);
+//    atom_add_pot.push(30980);
+//    atom_add_pot.push(30981);
+
+
+
+//    atom_add_pot.push(1891);
+//    atom_add_pot.push(1892);
+//    atom_add_pot.push(1893);
+//    atom_add_pot.push(1894);
+//    atom_add_pot.push(1895);
+//    atom_add_pot.push(1896);
+//    atom_add_pot.push(1897);
+//    atom_add_pot.push(1898);
+//    atom_add_pot.push(1899);
+//    atom_add_pot.push(1900);
+
+
+//    atom_add_pot.push(3840);
+//    atom_add_pot.push(3859);
+//    atom_add_pot.push(3860);
+//    atom_add_pot.push(3873);
+//    atom_add_pot.push(3874);
+//    atom_add_pot.push(3875);
+//    atom_add_pot.push(3876);
+//    atom_add_pot.push(3877);
+
+
+
+
+    s.atom_add_pot = Some(atom_add_pot);
+
+
+    use std::fs;
+    let filename: String = String::from("ini_vel");
+    let content = fs::read_to_string(&filename).expect(&error_file("reading", &filename));                // Read the whole file
+    let mut line = content.lines();                 // Take the iteractor for the lines of the file
+    let mut initial_velocity: Array2<f64> = Array2::zeros((s.natom, 3));
+    for i in 0..s.natom
+    {
+        // Read the velocity
+        let vel: Vec<&str> = match line.next()
+        {
+            Some(value) => value.split_whitespace().collect(),
+            None => panic!("{}", error_read(&filename)),
+        };
+        if vel.len() < 3
+        {
+            panic!("{}", error_read(&filename));
+        }
+
+        // Restore the velocity
+        initial_velocity[[i, 0]] = vel[0].parse().expect(&error_read(&filename));
+        initial_velocity[[i, 1]] = vel[1].parse().expect(&error_read(&filename));
+        initial_velocity[[i, 2]] = vel[2].parse().expect(&error_read(&filename));
+    }
+
+
+    let para: Para = Para::new();
+
+    let evolution_pot = EvolutionPot
+    {
+        initial_state: s,
+        initial_velocity: Some(initial_velocity),
+        para: &para,
+        output_path,
+    };
+
+    {
+        let cp2k_pes = Cp2kPES::new("6EQE.inp", &cp2k_output_file, 4);
+        evolution_pot.rtip_nvt_md(&my_comm, &cp2k_pes);
+    }
+
+
+
+
+
+
+
+
+
+
+/*
+    let mut s = ProteinSystem::read_pdb("filename.pdb");
+update_neighbor_list(&mut s, 3);
+//    for i in 0..s.fragment.len()
+//    {
+//        update_neighbor_list(&mut s, i);
+//    }
+    let (coord_within_rcut, _list_within_rcut, atomic_number_within_rcut): (Array2<f64>, Vec<usize>, Vec<usize>) = truncate_cluster(&s, 3);
+dbg!("aaa");
+    let (descriptor, gradient): (Vec<f64>, Array2<f64>) = get_descriptor(coord_within_rcut, atomic_number_within_rcut, s.fragment[3].natom);
+    dbg!(descriptor.len());
+*/
+
+
+
+
+
+
+
+/*
+    use crate::nn::global_nn::GlobalNN;
+    let global_nn = GlobalNN::new();
+    global_nn.save("");
+    let global_nn = GlobalNN::load("");
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    cp2k_finalize_without_mpi();
+//    println!("Finalization done");
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
