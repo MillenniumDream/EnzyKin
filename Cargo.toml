@@ -1,0 +1,32 @@
+[package]
+name = "EnzyKin"
+version = "0.1.0"
+authors = ["Xiao-Tian Li <xt.li1@siat.ac.cn>"]
+edition = "2021"
+description = "Enzyme Kinetics Simulation Package"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+libc = "0.2"
+phf = {version = "0.11", features = ["macros"]}
+lazy_static = "1.4.0"
+mpi = {version = "0.6", features = ["user-operations", "derive"]}
+num = "0.4"
+sphrs = "0.2.2"
+blas-src = {version = "0.8", features = ["openblas"]}
+openblas-src = {version = "0.10", features = ["cblas", "system"]}
+ndarray = {version = "0.15.0", features = ["blas"]}
+ndarray-rand = "0.14"
+ndarray-linalg = {version = "0.15.0", features = ["openblas-system"]}
+dfdx = { version = "0.13.0", default-features = false, features = ["std", "fast-alloc", "cpu", "safetensors"]}
+savefile = "0.17"
+savefile-derive = "0.17"
+
+[lib]
+name = "enzykin"
+crate-type = ["staticlib"]
+
+[features]
+default = []
+cuda = ["dfdx/cuda"]
+

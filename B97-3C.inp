@@ -1,0 +1,105 @@
+&Global
+        Project        B97-3C
+        Run_Type        Energy_Force
+        Print_Level        Silent
+&End Global
+&Force_Eval
+        Method        QS
+        &Subsys
+                &Cell
+                        ABC        15    15    15
+                        Alpha_Beta_Gamma        90    90    90
+                        Periodic        None
+                &End Cell
+                &Topology
+                        Coord_File_Format        xyz
+                        Coord_File_Name        IS.xyz
+                &End Topology
+                &Kind H
+                        Basis_Set        TZVP-MOLOPT-GTH
+                        Basis_Set        admm-dzp-q1
+                        Potential        GTH-PBE
+                &End Kind
+                &Kind C
+                        Basis_Set        TZVP-MOLOPT-GTH
+                        Basis_Set        admm-dzp-q4
+                        Potential        GTH-PBE
+                &End Kind
+                &Kind N
+                        Basis_Set        TZVP-MOLOPT-GTH
+                        Basis_Set        admm-dzp-q5
+                        Potential        GTH-PBE
+                &End Kind
+                &Kind O
+                        Basis_Set        TZVP-MOLOPT-GTH
+                        Basis_Set        admm-dzp-q6
+                        Potential        GTH-PBE
+                &End Kind
+                &Kind S
+                        Basis_Set        TZVP-MOLOPT-GTH
+                        Basis_Set        admm-dzp-q6
+                        Potential        GTH-PBE
+                &End Kind
+        &End Subsys
+        &DFT
+                Basis_Set_File_Name        BASIS_MOLOPT
+                Basis_Set_File_Name        BASIS_ADMM_UZH
+                Potential_File_Name        GTH_POTENTIALS
+                UKS        .True.
+                Charge        0
+                Multiplicity        1
+                &QS
+                        Method        GPW
+                        EPS_Default        1.0E-10
+                        EPS_PGF_Orb        1.0E-12
+                &End QS
+                &SCF
+                        Max_SCF        30
+                        EPS_SCF        1.0E-5
+                        SCF_Guess        Atomic
+                        &OT
+                                Minimizer        CG
+                                Preconditioner        Full_All
+                        &End OT
+                        &Outer_SCF
+                                Max_SCF        30
+                                EPS_SCF        1.0E-5
+                        &End Outer_SCF
+                        &Print
+                                &Restart Off
+                                &End Restart
+                                &Restart_History Off
+                                &End Restart_History
+                        &End Print
+                &End SCF
+                &Mgrid
+                        Ngrids        4
+                        Cutoff        300
+                        Rel_Cutoff        50
+                &End Mgrid
+                &Poisson
+                        Periodic        None
+                        Poisson_Solver        MT
+                &End Poisson
+                &XC
+                        &XC_Functional
+                                &Becke97
+                                        Parametrization        B97-3C
+                                        Scale_C        1.0
+                                        Scale_X        1.0
+                                &End Becke97
+                        &End XC_Functional
+                        &VDW_Potential
+                                 Dispersion_Functional        Pair_Potential
+                                 &Pair_Potential
+                                         Type        DFTD3(BJ)
+                                         Parameter_File_Name        dftd3.dat
+                                         Reference_Functional        B97-3c
+                                         R_Cutoff        7.93766
+                                         Calculate_C9_Term
+                                         Short_Range_Correction
+                                 &End Pair_Potential
+                        &End VDW_Potential
+                &End XC
+        &End DFT
+&End Force_Eval
